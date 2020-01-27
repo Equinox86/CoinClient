@@ -2,12 +2,12 @@
 #include <ESP8266HTTPClient.h>
 #include <stdio.h>
   
-//#define SERVER_IP "10.0.1.7:9080" // PC address with emulation on host
-#define SERVER_IP "192.168.0.159"
+//#define SERVER_IP "10.0.1.1:9080" // PC address with emulation on host
+#define SERVER_IP "*SERVER IP"
 
 #ifndef STASSID
-#define STASSID "LuxorNet"
-#define STAPSK  "Ichinisan-123"
+#define STASSID ""
+#define STAPSK  ""
 #endif
 
 String mac = WiFi.macAddress();
@@ -39,19 +39,19 @@ void loop() {
       HTTPClient http;
       //Serial.print("[HTTP] begin...\n");
       //configure traged server and url
-      http.begin(client, "http://" SERVER_IP "/coins/update.php"); 
+      http.begin(client, "http://" SERVER_IP "/update.php"); 
       http.addHeader("Content-Type", "application/x-www-form-urlencoded");
   
       //Serial.print("[HTTP] POST...\n");
       // start connection and send HTTP header and body
-      String payload = "mac="+mac+"&cu_count=" + pin_count[8]+ "&zn_count="+ pin_count[7]+"&status="+mac_status;
-      Serial.println(payload);
+      String payload = "mac="+mac+"&pin0=" + pin_count[0]+ "&pin1="+ pin_count[1] +"&pin2="+ pin_count[2]+"&pin3="+ pin_count[3]+"&pin4="+ pin_count[4]+"&pin5="+ pin_count[5]+"&pin6="+ pin_count[6]+"&pin7="+ pin_count[7]+"&pin8="+ pin_count[8];
+      //Serial.println(payload);
       int httpCode = http.POST(payload);
   
       // httpCode will be negative on error
       if (httpCode > 0) {
         // HTTP header has been send and Server response header has been handled
-        //Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+        Serial.printf("[HTTP] POST... code: %d\n", httpCode);
       }   
        
       int timing = (millis()-postTime);
