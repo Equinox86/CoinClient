@@ -5,16 +5,21 @@
 //#define SERVER_IP "10.0.1.1:9080" // PC address with emulation on host
 #define SERVER_IP "24.154.12.97"
 
+
 #ifndef STASSID
-#define STASSID ""
-#define STAPSK  ""
+#define STASSID "LuxorNet"
+#define STAPSK  "Ichinisan-123"
 #endif
 
 String mac = WiFi.macAddress();
 //digital pin interfacing
-int d_pins[6]= {5,4,14,12,13,15};
-int pin_count[6] = {0,0,0,0,0,0}; 
-bool pin_rise[6] = {false,false,false,false,false,false}; 
+const int IN_PINS=5;
+//int d_pins[]= {5};
+//int pin_count[] = {0}; 
+//bool pin_rise[] = {false}; 
+int d_pins[IN_PINS]= {5,4,14,12,13};
+int pin_count[IN_PINS] = {0,0,0,0,0}; 
+bool pin_rise[IN_PINS] = {false,false,false,false}; 
  
 
 unsigned long postTime = 0; 
@@ -26,11 +31,12 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
-  for(int i = 0; i <6; i++) { 
+  for(int i = 0; i <IN_PINS; i++) { 
     pinMode(d_pins[i],INPUT);
   }
-   
-
+  //Output Pins for Live Monitor
+  //  pinMode(2,OUTPUT); 
+  //  pinMode(0,OUTPUT); 
 }
 
 void loop() {
@@ -46,7 +52,7 @@ void loop() {
   
       //Serial.print("[HTTP] POST...\n");
       // start connection and send HTTP header and body
-      String payload = "mac="+mac+"&usr=webuser&pass=webmaster&pin0=" + pin_count[0]+ "&pin1="+ pin_count[1] +"&pin2="+ pin_count[2]+"&pin3="+ pin_count[3]+"&pin4="+ pin_count[4]+"&pin5="+ pin_count[5];
+      String payload = "mac="+mac+"&usr=webuser&pass=webmaster&cu_pin=" + pin_count[0]+ "&zn_pin="+ pin_count[1] +"&wht_pin="+ pin_count[2]+"&rjct_pin="+ pin_count[3]+"&cycle_pin="+ pin_count[4];
       Serial.println(payload);
       int httpCode = http.POST(payload);
   
@@ -67,7 +73,7 @@ void loop() {
     
   //-------------------Coin Counting Logic------------------------------------------
   } else { 
-    for(int i=0; i<6 ;i++) { 
+    for(int i=0; i<IN_PINS ;i++) { 
       if(digitalRead(d_pins[i])){ 
         if(!pin_rise[i]){ 
           //rising edge on pin
