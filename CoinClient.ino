@@ -7,8 +7,8 @@
 
 
 #ifndef STASSID
-#define STASSID "LuxorNet"
-#define STAPSK  "Ichinisan-123"
+#define STASSID ""
+#define STAPSK  ""
 #endif
 
 String mac = WiFi.macAddress();
