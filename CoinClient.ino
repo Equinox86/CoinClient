@@ -3,12 +3,12 @@
 #include <stdio.h>
   
 //#define SERVER_IP "10.0.1.1:9080" // PC address with emulation on host
-#define SERVER_IP "24.154.12.97"
+#define SERVER_IP "cceserver.ddns.com"
 
 
 #ifndef STASSID
-#define STASSID ""
-#define STAPSK  ""
+#define STASSID "[ACCESS POINT]"
+#define STAPSK  "[AP PASSWORD]"
 #endif
 
 String mac = WiFi.macAddress();

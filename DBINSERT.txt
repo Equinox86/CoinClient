@@ -1,0 +1,41 @@
+CREATE EVENT daily_post
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_TIMESTAMP + INTERVAL 10 HOUR
+DO
+INSERT INTO daily_summary
+SELECT * FROM
+(SELECT *, 
+(cu_total/total_coins) as cu_ratio,
+(zn_total/total_coins) as zn_ratio,
+(wht_total/total_coins) as wht_ratio
+FROM  (   
+    SELECT
+    ld1.mac_id as mac_id,
+    ld1.tx_time as snap_utc,
+    ld1.cu_pin as cu_total,
+    ld1.zn_pin as zn_total,
+    ld1.wht_pin as wht_total,
+    ld1.rjct_pin as rjct_total,
+    ld1.cycle_pin as cycle_total,
+    (ld1.cu_pin + ld1.zn_pin + ld1.wht_pin) as total_coins,
+    active_time.total_active as mac_up_time,
+    active_time.total_down as mac_down_time
+    FROM livedata ld1
+    INNER JOIN
+        (SELECT 
+         `mac_id`,
+         max(tx_time) as latest_tx
+         FROM livedata 
+         GROUP BY mac_id) as max_tx
+    INNER JOIN
+        (SELECT mac_id,sum(down_mins) as total_down ,sum(active_mins) as total_active
+        FROM
+        (SELECT mac_id, status, round((sum(snap_diff)/60),0)as time_in_min, 
+            round((sum(if(status = "DOWN",snap_diff,0))/60),0) as down_mins,
+            round((sum(if(status ="ACTIVE",snap_diff,0))/60),0) as active_mins
+        FROM 
+            (SELECT mac_id, tx_time, last_tx,status, (tx_time - last_tx) as snap_diff FROM livedata) snap_rollup
+        GROUP BY mac_id,status) as down_summary
+        GROUP BY mac_id) as active_time
+    ON ld1.mac_id = max_tx.mac_id and ld1.tx_time = max_tx.latest_tx 
+    AND ld1.mac_id = active_time.mac_id ) as total_summary) as daily_insert
