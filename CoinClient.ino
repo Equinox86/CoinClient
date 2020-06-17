@@ -3,7 +3,7 @@
 #include <stdio.h>
   
 //#define SERVER_IP "10.0.1.1:9080" // PC address with emulation on host
-#define SERVER_IP "cceserver.ddns.com"
+#define SERVER_IP "cceserver.ddns.net"
 
 
 #ifndef STASSID
